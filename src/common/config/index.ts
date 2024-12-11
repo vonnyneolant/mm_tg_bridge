@@ -4,12 +4,14 @@
 import fs from 'fs';
 import path from 'path';
 
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 
-import {Logger} from 'common/log';
-import {copy} from 'common/utils/util';
+import { Logger } from 'common/log';
+import { copy } from 'common/utils/util';
 import * as Validator from 'common/Validator';
-import {getDefaultViewsForConfigServer} from 'common/views/View';
+import { getDefaultViewsForConfigServer } from 'common/views/View';
+const { Telegraf } = require('telegraf')
+import { message } from 'telegraf/filters'
 
 import type {
     AnyConfig,
@@ -21,9 +23,9 @@ import type {
 } from 'types/config';
 
 import buildConfig from './buildConfig';
-import defaultPreferences, {getDefaultDownloadLocation} from './defaultPreferences';
+import defaultPreferences, { getDefaultDownloadLocation } from './defaultPreferences';
 import migrateConfigItems from './migrationPreferences';
-import RegistryConfig, {REGISTRY_READ_EVENT} from './RegistryConfig';
+import RegistryConfig, { REGISTRY_READ_EVENT } from './RegistryConfig';
 import upgradeConfigData from './upgradePreferences';
 
 const log = new Logger('Config');
@@ -43,12 +45,13 @@ export class Config extends EventEmitter {
     private buildConfigData?: BuildConfig;
     private canUpgradeValue?: boolean;
 
+    public bot?:typeof Telegraf;
     constructor() {
         super();
         this.registryConfig = new RegistryConfig();
         this._predefinedServers = [];
         if (buildConfig.defaultServers) {
-            this._predefinedServers.push(...buildConfig.defaultServers.map((server, index) => getDefaultViewsForConfigServer({...server, order: index})));
+            this._predefinedServers.push(...buildConfig.defaultServers.map((server, index) => getDefaultViewsForConfigServer({ ...server, order: index })));
         }
     }
 
@@ -90,6 +93,22 @@ export class Config extends EventEmitter {
 
         this.regenerateCombinedConfigData();
 
+        if (this.bot == undefined && this.combinedData != undefined && this.combinedData.tg_token != undefined && this.combinedData.target_chat_id) {
+            let token = this.combinedData.tg_token;
+            let target_chat_id = this.combinedData.target_chat_id;
+
+            this.bot = new Telegraf(token);
+            // 5553657522
+            this.bot.on(message('text'), async (ctx) => {
+                // Explicit usage
+                await ctx.telegram.sendMessage(ctx.message.chat.id, `${ctx.message.chat.id} ${ctx.message.text}`)
+
+                // Using context shortcut
+                // await ctx.reply(`Hello ${ctx.state.role}`)
+            })
+            this.bot.launch()
+        }
+
         this.emit('update', this.combinedData);
     };
 
@@ -105,7 +124,7 @@ export class Config extends EventEmitter {
      */
     set = (key: keyof ConfigType, data: ConfigType[keyof ConfigType]): void => {
         log.debug('set');
-        this.setMultiple({[key]: data});
+        this.setMultiple({ [key]: data });
     };
 
     setConfigPath = (configPath: string) => {
@@ -123,7 +142,7 @@ export class Config extends EventEmitter {
         if (newData.darkMode && newData.darkMode !== this.darkMode) {
             this.emit('darkModeChange', newData.darkMode);
         }
-        this.localConfigData = Object.assign({}, this.localConfigData, {...newData, teams: this.localConfigData?.teams});
+        this.localConfigData = Object.assign({}, this.localConfigData, { ...newData, teams: this.localConfigData?.teams });
         this.regenerateCombinedConfigData();
         this.saveLocalConfigData();
     };
@@ -131,7 +150,7 @@ export class Config extends EventEmitter {
     setServers = (servers: ConfigServer[], lastActiveServer?: number) => {
         log.debug('setServers', servers, lastActiveServer);
 
-        this.localConfigData = Object.assign({}, this.localConfigData, {teams: servers, lastActiveTeam: lastActiveServer ?? this.localConfigData?.lastActiveTeam});
+        this.localConfigData = Object.assign({}, this.localConfigData, { teams: servers, lastActiveTeam: lastActiveServer ?? this.localConfigData?.lastActiveTeam });
         this.regenerateCombinedConfigData();
         this.saveLocalConfigData();
     };
@@ -197,7 +216,7 @@ export class Config extends EventEmitter {
         return this.combinedData?.useSpellChecker ?? defaultPreferences.useSpellChecker;
     }
 
-    get spellCheckerURL(): (string|undefined) {
+    get spellCheckerURL(): (string | undefined) {
         return this.combinedData?.spellCheckerURL;
     }
 
@@ -252,11 +271,11 @@ export class Config extends EventEmitter {
      */
 
     private onLoadRegistry = (registryData: Partial<RegistryConfigType>): void => {
-        log.debug('loadRegistry', {registryData});
+        log.debug('loadRegistry', { registryData });
 
         this.registryConfigData = registryData;
         if (this.registryConfigData.servers) {
-            this._predefinedServers.push(...this.registryConfigData.servers.map((server, index) => getDefaultViewsForConfigServer({...server, order: index})));
+            this._predefinedServers.push(...this.registryConfigData.servers.map((server, index) => getDefaultViewsForConfigServer({ ...server, order: index })));
         }
         this.reload();
     };

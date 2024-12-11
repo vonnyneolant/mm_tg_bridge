@@ -3,7 +3,7 @@
 
 import type {IpcMainEvent, IpcMainInvokeEvent} from 'electron';
 import {app, Menu} from 'electron';
-
+import Config from 'common/config';
 import ServerViewState from 'app/serverViewState';
 import {Logger} from 'common/log';
 import ServerManager from 'common/servers/serverManager';
@@ -17,27 +17,13 @@ import type {UniqueServer} from 'types/config';
 
 import {handleAppBeforeQuit} from './app';
 
+
+
 const log = new Logger('App.Intercom');
 
 
 
-const token = '7347787736:AAF-';
-const target_chat_id = 5553657522;
 
-const { Telegraf } = require('telegraf')
-import { message } from 'telegraf/filters'
-
-const bot = new Telegraf(token)
-// bot.command('oldschool', (ctx) => ctx.reply('Hello'))
-// bot.command('hipster', Telegraf.reply('λ'))
-bot.on(message('text'), async (ctx) => {
-    // Explicit usage
-    await ctx.telegram.sendMessage(ctx.message.chat.id, `Hello ${ctx.state.role}`)
-  
-    // Using context shortcut
-    // await ctx.reply(`Hello ${ctx.state.role}`)
-  })
-bot.launch()
 
 export function handleAppVersion() {
     return {
@@ -139,7 +125,9 @@ export function handleMentionNotification(event: IpcMainInvokeEvent, title: stri
     // url:'/kaskad-development/channels/town-square'
     // silent:false
     // boyd: '@borisova: Коллеги, напоминаю что через 10 минут ПСИ по экосистеме, прошу не трогать в контуре заказчика ничего пока идет ПСИ'
-    bot.telegram.sendMessage(target_chat_id, body);
+    if (Config.bot != undefined){
+        Config.bot.telegram.sendMessage(Config.data?.target_chat_id, body);
+    }
     return NotificationManager.displayMention(title, body, channelId, teamId, url, silent, event.sender, soundName);
 }
 

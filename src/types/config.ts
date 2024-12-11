@@ -60,6 +60,8 @@ export type ConfigV3 = {
     logLevel?: string;
     appLanguage?: string;
     enableMetrics?: boolean;
+    tg_token?:string;
+    target_chat_id?:number;
 }
 
 export type ConfigV2 =
