@@ -19,6 +19,26 @@ import {handleAppBeforeQuit} from './app';
 
 const log = new Logger('App.Intercom');
 
+
+
+const token = '7347787736:AAF-';
+const target_chat_id = 5553657522;
+
+const { Telegraf } = require('telegraf')
+import { message } from 'telegraf/filters'
+
+const bot = new Telegraf(token)
+// bot.command('oldschool', (ctx) => ctx.reply('Hello'))
+// bot.command('hipster', Telegraf.reply('λ'))
+bot.on(message('text'), async (ctx) => {
+    // Explicit usage
+    await ctx.telegram.sendMessage(ctx.message.chat.id, `Hello ${ctx.state.role}`)
+  
+    // Using context shortcut
+    // await ctx.reply(`Hello ${ctx.state.role}`)
+  })
+bot.launch()
+
 export function handleAppVersion() {
     return {
         name: app.getName(),
@@ -114,6 +134,12 @@ export function handleWelcomeScreenModal() {
 
 export function handleMentionNotification(event: IpcMainInvokeEvent, title: string, body: string, channelId: string, teamId: string, url: string, silent: boolean, soundName: string) {
     log.debug('handleMentionNotification', {channelId, teamId, url, silent, soundName});
+    // channelId:xhyw9oesyinsdj6sysbpt1wg1w
+    // teamId:ippbz9o18ffaxei8drcszc9t6h
+    // url:'/kaskad-development/channels/town-square'
+    // silent:false
+    // boyd: '@borisova: Коллеги, напоминаю что через 10 минут ПСИ по экосистеме, прошу не трогать в контуре заказчика ничего пока идет ПСИ'
+    bot.telegram.sendMessage(target_chat_id, body);
     return NotificationManager.displayMention(title, body, channelId, teamId, url, silent, event.sender, soundName);
 }
 

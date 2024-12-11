@@ -152,6 +152,7 @@
     "sass-loader": "12.6.0",
     "semver": "7.6.0",
     "style-loader": "3.3.1",
+    "telegraf": "^4.16.3",
     "ts-prune": "0.10.3",
     "typescript": "5.3.3",
     "webpack": "5.90.3",
