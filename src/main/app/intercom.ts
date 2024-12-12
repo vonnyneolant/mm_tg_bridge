@@ -3,7 +3,7 @@
 
 import type {IpcMainEvent, IpcMainInvokeEvent} from 'electron';
 import {app, Menu} from 'electron';
-import Config from 'common/config';
+import tgBot  from 'common/utils/tg.bot';
 import ServerViewState from 'app/serverViewState';
 import {Logger} from 'common/log';
 import ServerManager from 'common/servers/serverManager';
@@ -125,8 +125,8 @@ export function handleMentionNotification(event: IpcMainInvokeEvent, title: stri
     // url:'/kaskad-development/channels/town-square'
     // silent:false
     // boyd: '@borisova: Коллеги, напоминаю что через 10 минут ПСИ по экосистеме, прошу не трогать в контуре заказчика ничего пока идет ПСИ'
-    if (Config.bot != undefined){
-        Config.bot.telegram.sendMessage(Config.data?.target_chat_id, body);
+    if (tgBot.bot != undefined){        
+        tgBot.send(channelId,url,body);
     }
     return NotificationManager.displayMention(title, body, channelId, teamId, url, silent, event.sender, soundName);
 }

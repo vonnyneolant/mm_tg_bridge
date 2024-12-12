@@ -152,7 +152,9 @@ const configDataSchemaV3 = Joi.object<ConfigV3>({
     appLanguage: Joi.string().allow(''),
     enableMetrics: Joi.boolean(),
     tg_token: Joi.string(),
-    target_chat_id: Joi.number()
+    tg_chat_id: Joi.number(),
+    mm_chats_wl: Joi.any(),
+    mm_chats_bl: Joi.any()
 });
 
 // eg. data['community.mattermost.com'] = { data: 'certificate data', issuerName: 'COMODO RSA Domain Validation Secure Server CA'};

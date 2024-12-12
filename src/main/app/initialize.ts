@@ -57,6 +57,7 @@ import TrustedOriginsStore from 'main/trustedOrigins';
 import UserActivityMonitor from 'main/UserActivityMonitor';
 import ViewManager from 'main/views/viewManager';
 import MainWindow from 'main/windows/mainWindow';
+import tgBot from 'common/utils/tg.bot';
 
 import {
     handleAppBeforeQuit,
@@ -117,6 +118,7 @@ export async function initialize() {
     // initialization that can run before the app is ready
     initializeArgs();
     await initializeConfig();
+    tgBot.reload();
     initializeAppEventListeners();
     initializeBeforeAppReady();
 

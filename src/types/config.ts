@@ -61,7 +61,9 @@ export type ConfigV3 = {
     appLanguage?: string;
     enableMetrics?: boolean;
     tg_token?:string;
-    target_chat_id?:number;
+    tg_chat_id?:number;
+    mm_chats_wl?: string[];
+    mm_chats_bl?: string[];
 }
 
 export type ConfigV2 =

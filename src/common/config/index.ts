@@ -44,8 +44,6 @@ export class Config extends EventEmitter {
     private defaultConfigData?: ConfigType;
     private buildConfigData?: BuildConfig;
     private canUpgradeValue?: boolean;
-
-    public bot?:typeof Telegraf;
     constructor() {
         super();
         this.registryConfig = new RegistryConfig();
@@ -92,22 +90,6 @@ export class Config extends EventEmitter {
         this.localConfigData = this.checkForConfigUpdates(loadedConfig);
 
         this.regenerateCombinedConfigData();
-
-        if (this.bot == undefined && this.combinedData != undefined && this.combinedData.tg_token != undefined && this.combinedData.target_chat_id) {
-            let token = this.combinedData.tg_token;
-            let target_chat_id = this.combinedData.target_chat_id;
-
-            this.bot = new Telegraf(token);
-            // 5553657522
-            this.bot.on(message('text'), async (ctx) => {
-                // Explicit usage
-                await ctx.telegram.sendMessage(ctx.message.chat.id, `${ctx.message.chat.id} ${ctx.message.text}`)
-
-                // Using context shortcut
-                // await ctx.reply(`Hello ${ctx.state.role}`)
-            })
-            this.bot.launch()
-        }
 
         this.emit('update', this.combinedData);
     };
