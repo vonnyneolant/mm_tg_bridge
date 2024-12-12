@@ -3,7 +3,7 @@
 
 import type {IpcMainEvent, IpcMainInvokeEvent} from 'electron';
 import {app, Menu} from 'electron';
-import tgBot  from 'common/utils/tg.bot';
+import tgBot  from 'common/utils/tgbot';
 import ServerViewState from 'app/serverViewState';
 import {Logger} from 'common/log';
 import ServerManager from 'common/servers/serverManager';

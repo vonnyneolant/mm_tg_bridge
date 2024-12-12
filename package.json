@@ -1,7 +1,7 @@
 {
   "name": "mattermost-desktop",
   "productName": "Mattermost",
-  "version": "5.10.2-rc.1",
+  "version": "5.10.2-rc.1.tg",
   "description": "Mattermost",
   "main": "dist/index.js",
   "author": "Mattermost, Inc. <feedback@mattermost.com>",
@@ -46,7 +46,7 @@
     "watch": "npm run create-linux-dev-shortcut && node scripts/watch.js",
     "package": "run-s package:windows package:mac-with-universal package:mas package:linux",
     "package:windows": "run-s package:windows-*",
-    "package:windows-zip": "npm run build-prod && electron-builder --win zip --x64 --arm64 --publish=never",
+    "package:windows-zip": "npm run build-prod && electron-builder --win zip --x64 --publish=never",
     "package:windows-installers": "npm run build-prod-upgrade && electron-builder --win nsis --x64 --arm64 --publish=never && node scripts/cp_msi_app_update.js && electron-builder --win msi --x64 --arm64 --publish=never",
     "package:mac": "npm run build-prod && electron-builder --config.mac.provisioningProfile=./mac.provisionProfile --mac --x64 --arm64 --publish=never",
     "package:mac-with-universal": "npm run package:mac -- --universal",
@@ -184,6 +184,7 @@
     "valid-url": "1.0.9",
     "windows-focus-assist": "1.4.0",
     "winreg-utf8": "0.1.1",
-    "yargs": "17.7.2"
+    "yargs": "17.7.2",
+    "telegraf": "^4.16.3"
   }
 }

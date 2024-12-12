@@ -17,6 +17,7 @@
   "files": [
     "!node_modules/**/*",
     "node_modules/bindings/**/*",
+    "node_modules/telegraf/**/*",
     "node_modules/file-uri-to-path/**/*",
     "node_modules/macos-notification-state/**/*",
     "node_modules/windows-focus-assist/**/*",

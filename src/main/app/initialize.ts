@@ -57,7 +57,7 @@ import TrustedOriginsStore from 'main/trustedOrigins';
 import UserActivityMonitor from 'main/UserActivityMonitor';
 import ViewManager from 'main/views/viewManager';
 import MainWindow from 'main/windows/mainWindow';
-import tgBot from 'common/utils/tg.bot';
+import tgBot from 'common/utils/tgbot';
 
 import {
     handleAppBeforeQuit,
