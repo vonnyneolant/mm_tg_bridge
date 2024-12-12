@@ -44,7 +44,8 @@ export class TGBot {
             if (channelId in this.mm_chats_bl)
                 return;
         }
-        let msg = `${channelId}: ${message}`;
+        // let msg = `${channelId}: ${message}`;
+        let msg = `${message}`;
         tgBot.bot.telegram.sendMessage(this.tg_chat_id, msg);
     }
 

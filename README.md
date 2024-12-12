@@ -18,6 +18,9 @@ Originally created as "electron-mattermost" by Yuya Ochiai.
 # Установка
 
 ```
+#branch tg!
+
+git clone -b tg https://github.com/vonnyneolant/mm_tg_bridge
 npm i
 npm run build
 ```
