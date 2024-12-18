@@ -17,17 +17,26 @@ Originally created as "electron-mattermost" by Yuya Ochiai.
 
 # Установка
 
-```
+```bash
 #branch tg!
 
 git clone -b tg https://github.com/vonnyneolant/mm_tg_bridge
 npm i
 npm run build
 ```
+## Альтернативный способ
+* Скачать архив [тут.](https://github.com/vonnyneolant/mm_tg_bridge/releases)
+* Распаковать
+
+```bash
+npm i
+npm run build
+```
+
 
 # Запуск
 
-```
+```bash
 run.bat
 ```
 
