@@ -5,7 +5,7 @@
     "url": "https://releases.mattermost.com/desktop"
     }
   ],
-  "appId": "Mattermost.Desktop",
+  "appId": "Mattermost.Desktop.TG",
   "artifactName": "${version}/${name}-${version}-${os}-${arch}.${ext}",
   "directories": {
     "buildResources": "src/assets",
@@ -35,7 +35,7 @@
   ],
   "protocols": [
     {
-      "name": "Mattermost",
+      "name": "Mattermost.TG",
       "schemes": [
         "mattermost"
       ]
@@ -46,7 +46,7 @@
   "afterAllArtifactBuild": "scripts/afterbuild.js",
   "deb": {
     "artifactName": "${version}/${name}_${version}-1_${arch}.${ext}",
-    "synopsis": "Mattermost Desktop App",
+    "synopsis": "Mattermost Desktop App With TG Bot",
     "depends": [
       "libnotify4",
       "libxtst6",

@@ -4,9 +4,7 @@
 
 Originally created as "electron-mattermost" by Yuya Ochiai.
 
-![mm-desktop-screenshot](https://user-images.githubusercontent.com/52460000/146078917-e1ba8c1f-24e5-4613-8b4b-f3507422f4f2.png)
 
-[![nightly-builds](https://github.com/mattermost/desktop/actions/workflows/nightly-builds.yaml/badge.svg)](https://github.com/mattermost/desktop/actions/workflows/nightly-builds.yaml)
 
 
 # Требования
@@ -46,9 +44,15 @@ run.bat
 
 
 # Настройка
+Приложение способно работать вместе с оригинальным приложением не нарушая его работу.
 
+* Скопировать файл конфигурации 
+  * из (`C:\Users\<ваш пользователь>\AppData\Roaming\Mattermost\config.json`) 
+  * в (`C:\Users\<ваш пользователь>\AppData\Roaming\Mattermost\config_tg.json`)
+  
+  *В случае с Dev весрией путь будет (`Roaming\Electron\config.json`)*
 * Создать нового бота с [BotFather](https://timeweb.com/go?url=https%3A%2F%2Ft.me%2FBotFather&hash=cd9983e30a369b67a65802db524835fa3da74bbc)
-* Добавить в файл конфигурации (`C:\Users\<ваш пользователь>\AppData\Roaming\Electron\config.json`) параметры подключения и фильтрации чатов
+* Добавить в файл конфигурации (`C:\Users\<ваш пользователь>\AppData\Roaming\Mattermost\config_tg.json`) параметры подключения и фильтрации чатов
 
 ```json 
   "tg_token": "<ваш Telegram Token>",

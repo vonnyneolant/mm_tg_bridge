@@ -4,10 +4,10 @@
   "version": "5.10.2-rc.1.tg",
   "description": "Mattermost",
   "main": "dist/index.js",
-  "author": "Mattermost, Inc. <feedback@mattermost.com>",
+  "author": "Mattermost, Inc. <savkinneolant@gmail.com>",
   "license": "Apache-2.0",
   "desktopName": "Mattermost.Desktop",
-  "homepage": "https://mattermost.com",
+  "homepage": "https://github.com/vonnyneolant/mm_tg_bridge/tree/tg",
   "engines": {
     "node": ">=18.0.0"
   },

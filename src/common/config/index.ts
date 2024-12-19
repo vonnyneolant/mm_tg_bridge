@@ -54,6 +54,7 @@ export class Config extends EventEmitter {
     }
 
     init = (configFilePath: string, appName: string, appPath: string) => {
+        console.log(configFilePath);
         this.configFilePath = configFilePath;
         this.appName = appName;
         this.appPath = appPath;

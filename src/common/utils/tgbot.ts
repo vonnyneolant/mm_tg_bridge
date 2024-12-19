@@ -22,8 +22,7 @@ export class TGBot {
             this.mm_chats_bl = config.data.mm_chats_bl;
             this.token = config.data.tg_token;
             this.tg_chat_id = config.data.tg_chat_id;
-            this.bot = new Telegraf(this.token);            
-            console.log(this.token);
+            this.bot = new Telegraf(this.token);                        
             console.log(this.bot);
             this.bot.on(message('text'), async (ctx) => {   
                 console.log(ctx.message.text);                             

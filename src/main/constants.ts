@@ -25,7 +25,7 @@ export let developerModeJson = '';
 export function updatePaths(emit = false) {
     userDataPath = app.getPath('userData');
 
-    configPath = `${userDataPath}/config.json`;
+    configPath = `${userDataPath}/config_tg.json`;
     allowedProtocolFile = path.resolve(userDataPath, 'allowedProtocols.json');
     appVersionJson = path.join(userDataPath, 'app-state.json');
     certificateStorePath = path.resolve(userDataPath, 'certificate.json');
