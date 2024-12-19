@@ -17,28 +17,33 @@ Originally created as "electron-mattermost" by Yuya Ochiai.
 
 # Установка
 
+* **Данный способ не требует установки зависимостей!** 
+* Скачать архив с приложением [тут.](https://github.com/vonnyneolant/mm_tg_bridge/releases)
+* Распаковать
+* Запустить
+* Выйти из приложения
+* Добавить необходимые параметры в файл настроек (см далее.)
+
+## Запуск из исходников (способ 1)
+
 ```bash
 #branch tg!
 
 git clone -b tg https://github.com/vonnyneolant/mm_tg_bridge
 npm i
 npm run build
+run.bat
 ```
-## Альтернативный способ
-* Скачать архив [тут.](https://github.com/vonnyneolant/mm_tg_bridge/releases)
+## Запуск из исходников (способ 2)
+* Скачать архив с исходным кодом [тут.](https://github.com/vonnyneolant/mm_tg_bridge/releases)
 * Распаковать
 
 ```bash
 npm i
 npm run build
-```
-
-
-# Запуск
-
-```bash
 run.bat
 ```
+
 
 # Настройка
 
