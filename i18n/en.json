@@ -246,6 +246,8 @@
   "renderer.components.settingsPage.showUnreadBadge.description": "Regardless of this setting, mentions are always indicated with a red badge and item count on the {taskbar} icon.",
   "renderer.components.settingsPage.startAppOnLogin": "Start app on login",
   "renderer.components.settingsPage.startAppOnLogin.description": "If enabled, the app starts automatically when you log in to your machine.",
+  "renderer.components.settingsPage.useTgBot": "Использовать Telegram bot",
+  "renderer.components.settingsPage.useTgBot.description": "Если эта функция включена, приложение будет отправлять уведомления о новых сообщениях в telegram bot.",
   "renderer.components.settingsPage.trayIcon.color": "Icon color: ",
   "renderer.components.settingsPage.trayIcon.show": "Show icon in the notification area",
   "renderer.components.settingsPage.trayIcon.show.darwin": "Show {appName} icon in the menu bar",

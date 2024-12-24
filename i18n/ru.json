@@ -246,6 +246,8 @@
   "renderer.components.settingsPage.showUnreadBadge.description": "Независимо от этой настройки, упоминания всегда обозначаются красным значком и количеством элементов на значке {taskbar}.",
   "renderer.components.settingsPage.startAppOnLogin": "Запускать приложение при входе в систему",
   "renderer.components.settingsPage.startAppOnLogin.description": "Если эта функция включена, приложение запускается автоматически при входе в систему.",
+  "renderer.components.settingsPage.useTgBot": "Использовать Telegram bot",
+  "renderer.components.settingsPage.useTgBot.description": "Если эта функция включена, приложение будет отправлять уведомления о новых сообщениях в telegram bot.",
   "renderer.components.settingsPage.trayIcon.color": "Цвет значка: ",
   "renderer.components.settingsPage.trayIcon.show": "Показать значок в области уведомлений",
   "renderer.components.settingsPage.trayIcon.show.darwin": "Показывать значок {appName} в строке меню",

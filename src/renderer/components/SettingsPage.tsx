@@ -7,22 +7,22 @@
 import 'renderer/css/settings.css';
 
 import createCache from '@emotion/cache';
-import {CacheProvider} from '@emotion/react';
-import type {EmotionCache} from '@emotion/react';
+import { CacheProvider } from '@emotion/react';
+import type { EmotionCache } from '@emotion/react';
 import React from 'react';
-import {FormCheck, Col, FormGroup, FormText, Container, Row, Button, FormControl, Modal} from 'react-bootstrap';
-import type {IntlShape} from 'react-intl';
-import {FormattedMessage, injectIntl} from 'react-intl';
-import type {ActionMeta, MultiValue} from 'react-select';
+import { FormCheck, Col, FormGroup, FormText, Container, Row, Button, FormControl, Modal } from 'react-bootstrap';
+import type { IntlShape } from 'react-intl';
+import { FormattedMessage, injectIntl } from 'react-intl';
+import type { ActionMeta, MultiValue } from 'react-select';
 import ReactSelect from 'react-select';
 
-import {localeTranslations} from 'common/utils/constants';
+import { localeTranslations } from 'common/utils/constants';
 
-import type {CombinedConfig, LocalConfiguration} from 'types/config';
-import type {SaveQueueItem} from 'types/settings';
-import type {DeepPartial} from 'types/utils';
+import type { CombinedConfig, LocalConfiguration } from 'types/config';
+import type { SaveQueueItem } from 'types/settings';
+import type { DeepPartial } from 'types/utils';
 
-import AutoSaveIndicator, {SavingState} from './AutoSaveIndicator';
+import AutoSaveIndicator, { SavingState } from './AutoSaveIndicator';
 
 const CONFIG_TYPE_UPDATES = 'updates';
 const CONFIG_TYPE_APP_OPTIONS = 'appOptions';
@@ -39,8 +39,8 @@ type State = DeepPartial<CombinedConfig> & {
     savingState: SavingStateItems;
     userOpenedDownloadDialog: boolean;
     allowSaveSpellCheckerURL: boolean;
-    availableLanguages: Array<{label: string; value: string}>;
-    availableSpellcheckerLanguages: Array<{label: string; value: string}>;
+    availableLanguages: Array<{ label: string; value: string }>;
+    availableSpellcheckerLanguages: Array<{ label: string; value: string }>;
     canUpgrade?: boolean;
     cache?: EmotionCache;
 }
@@ -55,6 +55,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
     downloadLocationRef: React.RefObject<HTMLInputElement>;
     showTrayIconRef: React.RefObject<HTMLInputElement>;
     autostartRef: React.RefObject<HTMLInputElement>;
+    useTgBotRef:  React.RefObject<HTMLInputElement>;
     hideOnStartRef: React.RefObject<HTMLInputElement>;
     minimizeToTrayRef: React.RefObject<HTMLInputElement>;
     flashWindowRef: React.RefObject<HTMLInputElement>;
@@ -71,7 +72,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
 
     saveQueue: SaveQueueItem[];
 
-    selectedSpellCheckerLocales: Array<{label: string; value: string}>;
+    selectedSpellCheckerLocales: Array<{ label: string; value: string }>;
 
     savingIsDebounced: boolean;
     resetSaveStateIsDebounced: boolean;
@@ -95,6 +96,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
         this.downloadLocationRef = React.createRef();
         this.showTrayIconRef = React.createRef();
         this.autostartRef = React.createRef();
+        this.useTgBotRef = React.createRef();
         this.hideOnStartRef = React.createRef();
         this.minimizeToTrayRef = React.createRef();
         this.flashWindowRef = React.createRef();
@@ -123,28 +125,30 @@ class SettingsPage extends React.PureComponent<Props, State> {
         });
 
         window.desktop.getAvailableSpellCheckerLanguages().then((languages: string[]) => {
-            const availableSpellcheckerLanguages = languages.filter((language) => localeTranslations[language]).map((language) => ({label: localeTranslations[language], value: language}));
+            const availableSpellcheckerLanguages = languages.filter((language) => localeTranslations[language]).map((language) => ({ label: localeTranslations[language], value: language }));
             availableSpellcheckerLanguages.sort((a, b) => a.label.localeCompare(b.label));
-            this.setState({availableSpellcheckerLanguages});
+            this.setState({ availableSpellcheckerLanguages });
         });
 
         window.desktop.getAvailableLanguages().then((languages: string[]) => {
-            const availableLanguages = languages.filter((language) => localeTranslations[language]).map((language) => ({label: localeTranslations[language], value: language}));
+            const availableLanguages = languages.filter((language) => localeTranslations[language]).map((language) => ({ label: localeTranslations[language], value: language }));
             availableLanguages.sort((a, b) => a.label.localeCompare(b.label));
-            this.setState({availableLanguages});
+            this.setState({ availableLanguages });
         });
 
         window.desktop.getNonce().then((nonce) => {
-            this.setState({cache: createCache({
-                key: 'react-select-cache',
-                nonce,
-            })});
+            this.setState({
+                cache: createCache({
+                    key: 'react-select-cache',
+                    nonce,
+                })
+            });
         });
     }
 
     getConfig = () => {
         window.desktop.getLocalConfiguration().then((config) => {
-            this.setState({ready: true, maximized: false, ...this.convertConfigDataToState(config as Partial<LocalConfiguration>, this.state) as Omit<State, 'ready'>});
+            this.setState({ ready: true, maximized: false, ...this.convertConfigDataToState(config as Partial<LocalConfiguration>, this.state) as Omit<State, 'ready'> });
         });
     };
 
@@ -154,11 +158,11 @@ class SettingsPage extends React.PureComponent<Props, State> {
             appOptions: SavingState.SAVING_STATE_DONE,
             updates: SavingState.SAVING_STATE_DONE,
         };
-        this.selectedSpellCheckerLocales = configData.spellCheckerLocales?.map((language: string) => ({label: localeTranslations[language] || language, value: language})) || [];
+        this.selectedSpellCheckerLocales = configData.spellCheckerLocales?.map((language: string) => ({ label: localeTranslations[language] || language, value: language })) || [];
         return newState;
     };
 
-    saveSetting = (configType: 'updates' | 'appOptions', {key, data}: {key: keyof CombinedConfig; data: CombinedConfig[keyof CombinedConfig]}) => {
+    saveSetting = (configType: 'updates' | 'appOptions', { key, data }: { key: keyof CombinedConfig; data: CombinedConfig[keyof CombinedConfig] }) => {
         this.saveQueue.push({
             configType,
             key,
@@ -186,7 +190,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
             [CONFIG_TYPE_APP_OPTIONS]: 0,
         };
 
-        queuedUpdateCounts = this.saveQueue.reduce((updateCounts, {configType}) => {
+        queuedUpdateCounts = this.saveQueue.reduce((updateCounts, { configType }) => {
             updateCounts[configType]++;
             return updateCounts;
         }, queuedUpdateCounts);
@@ -202,7 +206,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
             }
         });
 
-        this.setState({savingState});
+        this.setState({ savingState });
     };
 
     resetSaveState = (configType: keyof SavingStateItems) => {
@@ -215,13 +219,13 @@ class SettingsPage extends React.PureComponent<Props, State> {
             if (this.state.savingState[configType] !== SavingState.SAVING_STATE_SAVING) {
                 const savingState = Object.assign({}, this.state.savingState);
                 savingState[configType] = SavingState.SAVING_STATE_DONE;
-                this.setState({savingState});
+                this.setState({ savingState });
             }
         }, 2000);
     };
 
     handleEnableMetrics = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'enableMetrics', data: this.enableMetricsRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'enableMetrics', data: this.enableMetricsRef.current?.checked });
         this.setState({
             enableMetrics: this.enableMetricsRef.current?.checked,
         });
@@ -229,7 +233,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
 
     handleChangeShowTrayIcon = () => {
         const shouldShowTrayIcon = this.showTrayIconRef.current?.checked;
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'showTrayIcon', data: shouldShowTrayIcon});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'showTrayIcon', data: shouldShowTrayIcon });
         this.setState({
             showTrayIcon: shouldShowTrayIcon,
         });
@@ -242,21 +246,28 @@ class SettingsPage extends React.PureComponent<Props, State> {
     };
 
     handleChangeTrayIconTheme = (theme: string) => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'trayIconTheme', data: theme});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'trayIconTheme', data: theme });
         this.setState({
             trayIconTheme: theme,
         });
     };
 
     handleChangeAutoStart = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'autostart', data: this.autostartRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'autostart', data: this.autostartRef.current?.checked });
         this.setState({
             autostart: this.autostartRef.current?.checked,
         });
     };
 
+    handleChangeUseTgBot = () => {
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'useTgBot', data: this.useTgBotRef.current?.checked });
+        this.setState({
+            useTgBot: this.useTgBotRef.current?.checked,
+        });
+    };
+
     handleChangeHideOnStart = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'hideOnStart', data: this.hideOnStartRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'hideOnStart', data: this.hideOnStartRef.current?.checked });
         this.setState({
             hideOnStart: this.hideOnStartRef.current?.checked,
         });
@@ -265,7 +276,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
     handleChangeMinimizeToTray = () => {
         const shouldMinimizeToTray = (process.platform === 'win32' || this.state.showTrayIcon) && this.minimizeToTrayRef.current?.checked;
 
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'minimizeToTray', data: shouldMinimizeToTray});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'minimizeToTray', data: shouldMinimizeToTray });
         this.setState({
             minimizeToTray: shouldMinimizeToTray,
         });
@@ -320,35 +331,35 @@ class SettingsPage extends React.PureComponent<Props, State> {
     };
 
     handleShowUnreadBadge = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'showUnreadBadge', data: this.showUnreadBadgeRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'showUnreadBadge', data: this.showUnreadBadgeRef.current?.checked });
         this.setState({
             showUnreadBadge: this.showUnreadBadgeRef.current?.checked,
         });
     };
 
     handleChangeUseSpellChecker = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'useSpellChecker', data: this.useSpellCheckerRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'useSpellChecker', data: this.useSpellCheckerRef.current?.checked });
         this.setState({
             useSpellChecker: this.useSpellCheckerRef.current?.checked,
         });
     };
 
     handleChangeLogLevel = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'logLevel', data: this.logLevelRef.current?.value});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'logLevel', data: this.logLevelRef.current?.value });
         this.setState({
             logLevel: this.logLevelRef.current?.value,
         });
     };
 
     handleChangeAppLanguage = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'appLanguage', data: this.appLanguageRef.current?.value});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'appLanguage', data: this.appLanguageRef.current?.value });
         this.setState({
             appLanguage: this.appLanguageRef.current?.value,
         });
     };
 
     handleChangeAutoCheckForUpdates = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_UPDATES, {key: 'autoCheckForUpdates', data: this.autoCheckForUpdatesRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_UPDATES, { key: 'autoCheckForUpdates', data: this.autoCheckForUpdatesRef.current?.checked });
         this.setState({
             autoCheckForUpdates: this.autoCheckForUpdatesRef.current?.checked,
         }, () => {
@@ -362,31 +373,31 @@ class SettingsPage extends React.PureComponent<Props, State> {
         window.desktop.checkForUpdates();
     };
 
-    handleChangeSpellCheckerLocales = (value: MultiValue<{label: string; value: string}>, actionMeta: ActionMeta<{label: string; value: string}>) => {
+    handleChangeSpellCheckerLocales = (value: MultiValue<{ label: string; value: string }>, actionMeta: ActionMeta<{ label: string; value: string }>) => {
         switch (actionMeta.action) {
-        case 'select-option':
-            this.selectedSpellCheckerLocales = [...value];
-            break;
-        case 'remove-value':
-            this.selectedSpellCheckerLocales = this.selectedSpellCheckerLocales.filter((language) => language.value !== actionMeta.removedValue.value);
+            case 'select-option':
+                this.selectedSpellCheckerLocales = [...value];
+                break;
+            case 'remove-value':
+                this.selectedSpellCheckerLocales = this.selectedSpellCheckerLocales.filter((language) => language.value !== actionMeta.removedValue.value);
         }
 
         const values = this.selectedSpellCheckerLocales.map((language) => language.value);
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'spellCheckerLocales', data: values});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'spellCheckerLocales', data: values });
         this.setState({
             spellCheckerLocales: values,
         });
     };
 
     handleChangeEnableHardwareAcceleration = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'enableHardwareAcceleration', data: this.enableHardwareAccelerationRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'enableHardwareAcceleration', data: this.enableHardwareAccelerationRef.current?.checked });
         this.setState({
             enableHardwareAcceleration: this.enableHardwareAccelerationRef.current?.checked,
         });
     };
 
     handleChangeStartInFullscreen = () => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'startInFullscreen', data: this.startInFullscreenRef.current?.checked});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'startInFullscreen', data: this.startInFullscreenRef.current?.checked });
         this.setState({
             startInFullscreen: this.startInFullscreenRef.current?.checked,
         });
@@ -399,7 +410,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
         this.setState({
             downloadLocation: location,
         });
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'downloadLocation', data: location});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'downloadLocation', data: location });
     };
 
     handleChangeDownloadLocation = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -409,18 +420,18 @@ class SettingsPage extends React.PureComponent<Props, State> {
     selectDownloadLocation = () => {
         if (!this.state.userOpenedDownloadDialog) {
             window.desktop.getDownloadLocation(this.state.downloadLocation).then((result) => this.saveDownloadLocation(result));
-            this.setState({userOpenedDownloadDialog: true});
+            this.setState({ userOpenedDownloadDialog: true });
         }
-        this.setState({userOpenedDownloadDialog: false});
+        this.setState({ userOpenedDownloadDialog: false });
     };
 
     saveSpellCheckerURL = (): void => {
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'spellCheckerURL', data: this.state.spellCheckerURL});
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'spellCheckerURL', data: this.state.spellCheckerURL });
     };
 
     resetSpellCheckerURL = (): void => {
-        this.setState({spellCheckerURL: undefined, allowSaveSpellCheckerURL: false});
-        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, {key: 'spellCheckerURL', data: undefined});
+        this.setState({ spellCheckerURL: undefined, allowSaveSpellCheckerURL: false });
+        window.timers.setImmediate(this.saveSetting, CONFIG_TYPE_APP_OPTIONS, { key: 'spellCheckerURL', data: undefined });
     };
 
     handleChangeSpellCheckerURL = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -444,7 +455,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
     };
 
     render() {
-        const {intl} = this.props;
+        const { intl } = this.props;
 
         if (!this.state.cache) {
             return null;
@@ -530,6 +541,28 @@ class SettingsPage extends React.PureComponent<Props, State> {
         };
 
         const options = [];
+
+        options.push(
+            <FormCheck>
+                <FormCheck.Input
+                    type='checkbox'
+                    key='useTgBot'
+                    id='useTgBot'
+                    ref={this.useTgBotRef}
+                    checked={this.state.useTgBot}
+                    onChange={this.handleChangeUseTgBot}
+                />
+                <FormattedMessage
+                    id='renderer.components.settingsPage.useTgBot'
+                    defaultMessage='Telegram Bot'
+                />
+                <FormText>
+                    <FormattedMessage
+                        id='renderer.components.settingsPage.useTgBot.description'
+                        defaultMessage='If enabled, the app will send notification message to Telegram Bot.'
+                    />
+                </FormText>
+            </FormCheck>);
 
         // MacOS has an option in the Dock, to set the app to autostart, so we choose to not support this option for OSX
         if (window.process.platform === 'win32' || window.process.platform === 'linux') {
@@ -633,7 +666,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                     <Button
                         id='editSpellcheckerURL'
                         key='editSpellcheckerURL'
-                        onClick={() => this.setState({spellCheckerURL: '', allowSaveSpellCheckerURL: false})}
+                        onClick={() => this.setState({ spellCheckerURL: '', allowSaveSpellCheckerURL: false })}
                         variant='link'
                     >
                         <FormattedMessage
@@ -706,13 +739,13 @@ class SettingsPage extends React.PureComponent<Props, State> {
                     <FormattedMessage
                         id='renderer.components.settingsPage.showUnreadBadge'
                         defaultMessage='Show red badge on {taskbar} icon to indicate unread messages'
-                        values={{taskbar}}
+                        values={{ taskbar }}
                     />
                     <FormText>
                         <FormattedMessage
                             id='renderer.components.settingsPage.showUnreadBadge.description'
                             defaultMessage='Regardless of this setting, mentions are always indicated with a red badge and item count on the {taskbar} icon.'
-                            values={{taskbar}}
+                            values={{ taskbar }}
                         />
                     </FormText>
                 </FormCheck>);
@@ -764,7 +797,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         />
                         {window.process.platform === 'linux' && (
                             <>
-                                <br/>
+                                <br />
                                 <em>
                                     <strong>
                                         <FormattedMessage
@@ -796,7 +829,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         ref={this.bounceIconRef}
                         checked={this.state.notifications ? this.state.notifications.bounceIcon : false}
                         onChange={this.handleBounceIcon}
-                        style={{marginRight: '10px'}}
+                        style={{ marginRight: '10px' }}
                         label={
                             <FormattedMessage
                                 id='renderer.components.settingsPage.bounceIcon'
@@ -812,8 +845,8 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         disabled={!this.state.notifications || !this.state.notifications.bounceIcon}
                         defaultChecked={
                             !this.state.notifications ||
-                !this.state.notifications.bounceIconType ||
-                this.state.notifications.bounceIconType === 'informational'
+                            !this.state.notifications.bounceIconType ||
+                            this.state.notifications.bounceIconType === 'informational'
                         }
                         onChange={this.handleBounceIconType}
                         label={
@@ -840,7 +873,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         }
                     />
                     <FormText
-                        style={{marginLeft: '20px'}}
+                        style={{ marginLeft: '20px' }}
                     >
                         <FormattedMessage
                             id='renderer.components.settingsPage.bounceIcon.description'
@@ -867,7 +900,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         <FormattedMessage
                             id='renderer.components.settingsPage.trayIcon.show.darwin'
                             defaultMessage='Show {appName} icon in the menu bar'
-                            values={{appName: this.state.appName}}
+                            values={{ appName: this.state.appName }}
                         /> :
                         <FormattedMessage
                             id='renderer.components.settingsPage.trayIcon.show'
@@ -889,7 +922,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                     <FormGroup
                         key='trayIconTheme'
                         ref={this.trayIconThemeRef}
-                        style={{marginLeft: '20px'}}
+                        style={{ marginLeft: '20px' }}
                     >
                         <FormattedMessage
                             id='renderer.components.settingsPage.trayIcon.color'
@@ -1049,7 +1082,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                 style={settingsPage.container}
                 key='containerDownloadLocation'
             >
-                <hr/>
+                <hr />
                 <FormattedMessage
                     id='renderer.components.settingsPage.appLanguage'
                     defaultMessage='Set app language (beta)'
@@ -1063,7 +1096,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                     onChange={this.handleChangeAppLanguage}
                 >
                     <option value=''>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.appLanguage.useSystemDefault', defaultMessage: 'Use system default'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.appLanguage.useSystemDefault', defaultMessage: 'Use system default' })}
                     </option>
                     {this.state.availableLanguages.map((language) => {
                         return (
@@ -1081,13 +1114,13 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         id='renderer.components.settingsPage.appLanguage.description'
                         defaultMessage='Chooses the language that the Desktop App will use for menu items and popups. Still in beta, some languages will be missing translation strings.'
                     />
-                    <br/>
+                    <br />
                     <FormattedMessage
                         id='renderer.components.settingsPage.afterRestart'
                         defaultMessage='Setting takes effect after restarting the app.'
                     />
                 </FormText>
-                <br/>
+                <br />
                 <div>
                     <FormattedMessage
                         id='renderer.components.settingsPage.downloadLocation'
@@ -1119,7 +1152,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         defaultMessage='Specify the folder where files will download.'
                     />
                 </FormText>
-                <br/>
+                <br />
                 <FormattedMessage
                     id='renderer.components.settingsPage.loggingLevel'
                     defaultMessage='Logging level'
@@ -1133,22 +1166,22 @@ class SettingsPage extends React.PureComponent<Props, State> {
                     onChange={this.handleChangeLogLevel}
                 >
                     <option value='error'>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.loggingLevel.level.error', defaultMessage: 'Errors (error)'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.loggingLevel.level.error', defaultMessage: 'Errors (error)' })}
                     </option>
                     <option value='warn'>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.loggingLevel.level.warn', defaultMessage: 'Errors and Warnings (warn)'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.loggingLevel.level.warn', defaultMessage: 'Errors and Warnings (warn)' })}
                     </option>
                     <option value='info'>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.loggingLevel.level.info', defaultMessage: 'Info (info)'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.loggingLevel.level.info', defaultMessage: 'Info (info)' })}
                     </option>
                     <option value='verbose'>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.loggingLevel.level.verbose', defaultMessage: 'Verbose (verbose)'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.loggingLevel.level.verbose', defaultMessage: 'Verbose (verbose)' })}
                     </option>
                     <option value='debug'>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.loggingLevel.level.debug', defaultMessage: 'Debug (debug)'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.loggingLevel.level.debug', defaultMessage: 'Debug (debug)' })}
                     </option>
                     <option value='silly'>
-                        {intl.formatMessage({id: 'renderer.components.settingsPage.loggingLevel.level.silly', defaultMessage: 'Finest (silly)'})}
+                        {intl.formatMessage({ id: 'renderer.components.settingsPage.loggingLevel.level.silly', defaultMessage: 'Finest (silly)' })}
                     </option>
                 </FormControl>
                 <FormText>
@@ -1156,7 +1189,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                         id='renderer.components.settingsPage.loggingLevel.description'
                         defaultMessage='Logging is helpful for developers and support to isolate issues you may be encountering with the desktop app.'
                     />
-                    <br/>
+                    <br />
                     <FormattedMessage
                         id='renderer.components.settingsPage.loggingLevel.description.subtitle'
                         defaultMessage='Increasing the log level increases disk space usage and can impact performance. We recommend only increasing the log level if you are having issues.'
@@ -1188,11 +1221,11 @@ class SettingsPage extends React.PureComponent<Props, State> {
                                 }
                             />
                         </div>
-                        { options.map((opt) => (
+                        {options.map((opt) => (
                             <FormGroup key={opt.key}>
                                 {opt}
                             </FormGroup>
-                        )) }
+                        ))}
                     </Col>
                 </Row>
             );
@@ -1258,7 +1291,7 @@ class SettingsPage extends React.PureComponent<Props, State> {
                             </FormGroup>
                         </Col>
                     </Row>
-                    <hr/>
+                    <hr />
                 </>
             );
         }

@@ -151,6 +151,7 @@ const configDataSchemaV3 = Joi.object<ConfigV3>({
     logLevel: Joi.string().default('info'),
     appLanguage: Joi.string().allow(''),
     enableMetrics: Joi.boolean(),
+    useTgBot: Joi.boolean(),
     tg_token: Joi.string(),
     tg_chat_id: Joi.number(),
     mm_chats_wl: Joi.any(),

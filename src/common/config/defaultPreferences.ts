@@ -53,6 +53,7 @@ const defaultPreferences: ConfigV3 = {
     logLevel: 'info',
     enableMetrics: true,
     tg_token:"null",
+    useTgBot: true
 };
 
 export default defaultPreferences;

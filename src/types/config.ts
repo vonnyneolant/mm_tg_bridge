@@ -64,6 +64,7 @@ export type ConfigV3 = {
     tg_chat_id?:number;
     mm_chats_wl?: string[];
     mm_chats_bl?: string[];
+    useTgBot: boolean;
 }
 
 export type ConfigV2 =
