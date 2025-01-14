@@ -10,6 +10,7 @@ export class TGBot {
     private tg_chat_id?: number;
     private mm_chats_wl?: string[];
     private mm_chats_bl?: string[];
+    private last_sended?: string;
 
     init = () => {
         this.reload();
@@ -25,9 +26,14 @@ export class TGBot {
             this.bot = new Telegraf(this.token);
             console.log(this.bot);
             this.bot.on(message('text'), async (ctx) => {
-                console.log(ctx.message.text);
-                if (config.data?.useTgBot == true) {
-                    await ctx.telegram.sendMessage(ctx.message.chat.id, `${ctx.message.chat.id} ${ctx.message.text}`)
+                try {
+                    console.log(ctx.message.text);
+                    if (config.data?.useTgBot == true) {
+                        await ctx.telegram.sendMessage(ctx.message.chat.id, `${ctx.message.chat.id} ${ctx.message.text}`)
+                    }
+                }
+                catch (e) {
+                    console.log(e);
                 }
             })
             console.log("starting bot");
@@ -37,18 +43,27 @@ export class TGBot {
     }
 
     send = (channelId: string, url: string, message: string): void => {
-        if (this.mm_chats_wl != undefined && this.mm_chats_wl.length > 0) {
-            if (!(channelId in this.mm_chats_wl))
-                return;
+        try {
+            if (this.mm_chats_wl != undefined && this.mm_chats_wl.length > 0) {
+                if (!(channelId in this.mm_chats_wl))
+                    return;
+            }
+            if (this.mm_chats_bl != undefined && this.mm_chats_bl.length > 0) {
+                if (channelId in this.mm_chats_bl)
+                    return;
+            }
+            // let msg = `${channelId}: ${message}`;
+            let msg = `${message}`;
+            if (config.data?.useTgBot == true) {
+                // Временный костыль, чтобы решить проблему двойной отправки из версии с бинарником            
+                if (this.last_sended != channelId + url + message) {
+                    tgBot.bot.telegram.sendMessage(this.tg_chat_id, msg);
+                }
+                this.last_sended = channelId + url + message;
+            }
         }
-        if (this.mm_chats_bl != undefined && this.mm_chats_bl.length > 0) {
-            if (channelId in this.mm_chats_bl)
-                return;
-        }
-        // let msg = `${channelId}: ${message}`;
-        let msg = `${message}`;
-        if (config.data?.useTgBot == true) {
-            tgBot.bot.telegram.sendMessage(this.tg_chat_id, msg);
+        catch (e) {
+            console.log(e);
         }
     }
 
